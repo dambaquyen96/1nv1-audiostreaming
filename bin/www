@@ -1,0 +1,194 @@
+#!/usr/bin/env node
+
+Object.defineProperty(global, '__stack', {
+get: function() {
+        var orig = Error.prepareStackTrace;
+        Error.prepareStackTrace = function(_, stack) {
+            return stack;
+        };
+        var err = new Error;
+        Error.captureStackTrace(err, arguments.callee);
+        var stack = err.stack;
+        Error.prepareStackTrace = orig;
+        return stack;
+    }
+});
+
+Object.defineProperty(global, '__line', {
+get: function() {
+        return __stack[1].getLineNumber();
+    }
+});
+
+Object.defineProperty(global, '__function', {
+get: function() {
+        return __stack[1].getFunctionName();
+    }
+});
+
+Object.defineProperty(global, '__file', {
+get: function() {
+        return __stack[1].getFileName();
+    }
+});
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('audiostreaming:server');
+var http = require('http');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+
+var io = require('socket.io').listen(server,
+  {
+    'connect timeout': 1000,
+    'pingTimeout': 3000,
+    'pingInterval': 3000,
+    // 'reconnect': true,
+    // 'reconnection delay': 300,
+    // 'max reconnection attempts': 10000,
+    // 'force new connection':true
+  });
+
+// var svrio = require('../private/svrio');
+var ss = require('socket.io-stream');
+var path = require('path');
+var fs = require('fs');
+
+const util = require('util');
+
+io.sockets.on('connection', function(socket) {
+  if(socket.conn.transport.socket)
+    console.log(`${__file} [${__line}] connection: ${socket.conn.transport.socket._socket.remoteAddress} : ${socket.conn.transport.socket._socket.remotePort}`);
+  else if(socket.request.connection)
+    console.log(`${__file} [${__line}] connection: ${socket.request.connection.remoteAddress} : ${socket.request.connection.remotePort}`);
+  else
+    console.log(`${__file} [${__line}] connection...`);
+  // var prod_soc;
+  // var prod_stream;
+  // var state = 0;
+  // var cons_soc;
+  // var cons_stream;
+
+  var idx=0;
+
+  socket.on('bcdata', (data) => {
+    // console.log(`${__file} [${__line}]`);
+    if(socket.conn.transport.socket)
+      console.log(`${__file} [${__line}] bcdata: ${socket.conn.transport.socket._socket.remoteAddress} : ${socket.conn.transport.socket._socket.remotePort}`);
+    else if(socket.request.connection)
+      console.log(`${__file} [${__line}] bcdata: ${socket.request.connection.remoteAddress} : ${socket.request.connection.remotePort}`);
+    // idx++;
+    // // console.log(util.inspect(data));
+
+    // fs.writeFile("recv" + idx + ".pcm", data, function(err) {
+    //     if(err) {
+    //         return console.log(err);
+    //     }
+
+    //     console.log("The file was saved!");
+    // });
+
+    socket.broadcast.emit('data', data);
+  })
+  .on('bcend', () => {
+    console.log(`${__file} [${__line}]`);
+    socket.broadcast.emit('end');
+  })
+  .on('disconnect', () => {
+    console.log(`${__file} [${__line}]`);
+  })
+  .on('timeout', () => {
+    console.log(`${__file} [${__line}]`);
+  })
+  .on('bcaccel', (data) => {
+    console.log(`${__file} [${__line}]`);
+    console.log(util.inspect(data));
+    socket.broadcast.emit('accel', data);
+    console.log("AAA: " + data);
+  });
+
+
+});

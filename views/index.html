@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html ng-app="AudioStreaming" >
+    <head>
+        <title>Audio streaming sytem</title>
+
+        <!--
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.4/angular-material.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-animate.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-aria.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.4/angular-material.min.js"></script>
+        <!-- -->
+
+        <!-- <link rel="stylesheet" href="local/angular-material.min.css"> -->
+        <link rel="stylesheet" href="/local/angular-material.min.css">
+        <link rel="stylesheet" href="/local/bootstrap.min.css">
+        <link rel="stylesheet" href="/stylesheets/style.css">
+
+        <script src="/local/angular.min.js"></script>
+        <script src="/local/angular-animate.min.js"></script>
+        <script src="/local/angular-aria.min.js"></script>
+        <script src="/local/angular-material.min.js"></script>
+        <script src="/local/angular-sanitize.js"></script>
+        <script src="/local/jquery.min.js"></script>
+        <!-- -->
+
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/javascripts/utils.js" type="text/javascript"></script>
+        <script src="/javascripts/client.js" type="text/javascript"></script>
+    </head>
+<body>
+    <script id="2d-vertex-shader" type="notjs">
+      // an attribute will receive data from a buffer
+      attribute vec4 a_position;
+
+      // all shaders have a main function
+      void main() {
+
+        // gl_Position is a special variable a vertex shader
+        // is responsible for setting
+        gl_Position = a_position;
+      }
+
+    </script>
+    <script id="2d-fragment-shader" type="notjs">
+
+      // fragment shaders don't have a default precision so we need
+      // to pick one. mediump is a good default
+      precision mediump float;
+
+      void main() {
+        // gl_FragColor is a special variable a fragment shader
+        // is responsible for setting
+        gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
+      }
+
+    </script>
+    <div ng-controller="MainCtrl as ctrl" primary="primary" accent="accent">
+        <!-- <div ng-waveform="wave_buffer" width="500" height="100" data="wf_data" ></div> -->
+        <!-- {{wf_data}} -->
+        <!-- <canvas id="canvas"></canvas> -->
+<!--         <canvas id="c"></canvas>
+        <canvas id="one"></canvas>
+        <canvas id="two"></canvas> -->
+
+        <!-- <ng-wfc></ng-wfc> -->
+<!--
+        <script type="text/javascript">
+            var htmlCanvas = document.getElementById("canvas");
+            var offscreen = htmlCanvas.transferControlToOffscreen();
+        </script>
+ -->
+        <!-- // <script src="classes/cocos2d.js"></script> -->
+        <script src="cocos2d-js-v3.13.js"></script>
+        <script src="wf.js"></script>
+        <!-- <div style="text-align: center; font-size: 0">
+            <canvas id="gameCanvas" style="border:1px solid #d3d3d3;">
+                Your browser does not support the canvas tag
+            </canvas>
+        </div> -->
+        <canvas id="gameCanvas"></canvas>     
+        <div style="position: fixed; z-index: 999; top: 10px; right: 0">
+            <button ng-bind-html="btnRecord" ng-click="clickRecord()">Record</button>
+        </div>
+    </div>
+
+    <!-- <canvas id="myCanvas" style="height: 100px;"></canvas> -->
+
+    <!-- <h1> Hello world </h1> -->
+
+    </body>
+</html>
