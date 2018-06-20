@@ -1,9 +1,15 @@
 importScripts('/socket.io/socket.io.js');
 
-var socket = io.connect('http://192.168.31.2:3000', {
+var socket = io.connect('http://127.0.0.1:3000', {
     timeout: 500,
     reconnection: true
 });
+
+onmessage = function(e) {
+	console.log(e.data);
+	socket.emit('watch', e.data);
+};
+
 
 socket.on('data', (chunk) => {
     self.postMessage({cmd:'data', data:chunk}, [chunk]);

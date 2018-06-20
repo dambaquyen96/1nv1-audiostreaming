@@ -3,6 +3,11 @@
 // var appScope = angular.element(appElement).scope();
 // var controllerScope = appScope.$$childHead;
 
+var room = document.getElementById("room").innerHTML;
+var username = document.getElementById("username").innerHTML;
+var name = document.getElementById("name").innerHTML;
+var address = document.getElementById("address").innerHTML;
+
 var MyScene = cc.Scene.extend({
 
     _layer: null,
@@ -137,25 +142,10 @@ var MyScene = cc.Scene.extend({
         lbAz.setAnchorPoint(0,0.5);
         this._layer.addChild(lbAz, 100, 1060);
 
-        // // 2196F3
-        // var rotX = new cc.DrawNode();
-        // rotX.drawSegment(cc.p(-50, 0),cc.p(50, 0), 3, cc.color(0xf4, 0x43, 0x36, 255));
-        // rotX.setPosition(cc.p(100, winSize.height - 100));
-        // this._layer.addChild(rotX, 11, 101);
-
-        // var rotY = new cc.DrawNode();
-        // rotY.drawSegment(cc.p(-35, -50),cc.p(-35, 50), 3, cc.color(0x8b, 0xc3, 0x4a, 255));
-        // rotY.drawSegment(cc.p(-35, 50),cc.p(35, 50), 3, cc.color(0x8b, 0xc3, 0x4a, 255));
-        // rotY.drawSegment(cc.p(35, 50),cc.p(35, -50), 3, cc.color(0x8b, 0xc3, 0x4a, 255));
-        // rotY.drawSegment(cc.p(35, -50),cc.p(-35, -50), 3, cc.color(0x8b, 0xc3, 0x4a, 255));
-        // rotY.setPosition(cc.p(250, winSize.height - 100));
-        // this._layer.addChild(rotY, 11, 102);
-
-        // // F44336
-        // var rotZ = new cc.DrawNode();
-        // rotZ.drawSegment(cc.p(-50, 0),cc.p(50, 0), 3, cc.color(0x21, 0x96, 0xf3, 255));
-        // rotZ.setPosition(cc.p(400, winSize.height - 100));
-        // this._layer.addChild(rotZ, 11, 103);
+        var lbInfo = cc.LabelTTF.create(name + ' [' + address + ']', "Arial", 20);
+        lbInfo.setPosition(cc.p(this._offset/5, winSize.height - 20));
+        lbInfo.setAnchorPoint(0,0.5);
+        this._layer.addChild(lbInfo, 100, 1070);
 
         this.scheduleUpdate();
     },

@@ -3,7 +3,7 @@ const util = require('util');
 var CHUNK_SIZE = 0x400;
 
 var io = require('socket.io-client');
-var socket = io('http://localhost:3000');
+var socket = io('http://127.0.0.1:3000');
 
 var fs = require('fs');
 
@@ -13,13 +13,6 @@ var filename = './bbs.mp3';
 
 socket.on('connect', () => {
     console.log(`CONNECTED`);
-
-    // var file_stream = fs.createReadStream(filename);
-    // .on('readable', () => {
-    //     console.log("readable!!!");
-    // })
-    // .pipe(socket);
-
     var file_stream = fs.createReadStream(filename);
 
     let chunk;

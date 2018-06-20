@@ -139,55 +139,126 @@ var fs = require('fs');
 
 const util = require('util');
 
+var room_address = [];
+var list_address = {};
+var data2address = {};
+var accel2address = {};
+
 io.sockets.on('connection', function(socket) {
-  if(socket.conn.transport.socket)
-    console.log(`${__file} [${__line}] connection: ${socket.conn.transport.socket._socket.remoteAddress} : ${socket.conn.transport.socket._socket.remotePort}`);
-  else if(socket.request.connection)
-    console.log(`${__file} [${__line}] connection: ${socket.request.connection.remoteAddress} : ${socket.request.connection.remotePort}`);
-  else
-    console.log(`${__file} [${__line}] connection...`);
+  // if(socket.conn.transport.socket)
+  //   console.log(`${__file} [${__line}] connection: ${socket.conn.transport.socket._socket.remoteAddress} : ${socket.conn.transport.socket._socket.remotePort}`);
+  // else if(socket.request.connection)
+  //   console.log(`${__file} [${__line}] connection: ${socket.request.connection.remoteAddress} : ${socket.request.connection.remotePort}`);
+  // else
+  //   console.log(`${__file} [${__line}] connection...`);
+
   // var prod_soc;
   // var prod_stream;
   // var state = 0;
-  // var cons_soc;
+  // var cons_soc; 
   // var cons_stream;
 
-  var idx=0;
-
-  socket.on('bcdata', (data) => {
-    // console.log(`${__file} [${__line}]`);
+  socket.on('register', (data)=>{
     if(socket.conn.transport.socket)
-      console.log(`${__file} [${__line}] bcdata: ${socket.conn.transport.socket._socket.remoteAddress} : ${socket.conn.transport.socket._socket.remotePort}`);
+      address = socket.conn.transport.socket._socket.remoteAddress;
     else if(socket.request.connection)
-      console.log(`${__file} [${__line}] bcdata: ${socket.request.connection.remoteAddress} : ${socket.request.connection.remotePort}`);
-    // idx++;
-    // // console.log(util.inspect(data));
+      address =  socket.request.connection.remoteAddress;
 
-    // fs.writeFile("recv" + idx + ".pcm", data, function(err) {
-    //     if(err) {
-    //         return console.log(err);
-    //     }
+    var room_idx = room_address.indexOf(address);
+    if(room_idx == -1){
+      room_idx = room_address.length;
+      room_address.push(address);
+    }
 
-    //     console.log("The file was saved!");
-    // });
-
-    socket.broadcast.emit('data', data);
+    list_address[address] = {};
+    list_address[address]['info'] = data;
+    list_address[address]['data_id'] = undefined;
+    list_address[address]['accel_id'] = undefined;
+    console.log(data);
   })
-  .on('bcend', () => {
-    console.log(`${__file} [${__line}]`);
-    socket.broadcast.emit('end');
+  .on('watch', (data)=>{
+    if(socket.conn.transport.socket)
+      address = socket.conn.transport.socket._socket.remoteAddress;
+    else if(socket.request.connection)
+      address =  socket.request.connection.remoteAddress;
+    socket.join(data);
+    console.log(address + ' watch room ' + data);
   })
-  .on('disconnect', () => {
-    console.log(`${__file} [${__line}]`);
+  .on('get_device', (data)=>{
+    result = []
+    for(var i = 0; i < room_address.length; i++){
+      address = room_address[i];
+      tmp = {};
+      tmp['room'] = i;
+      tmp['username'] = list_address[address]['info']['username'];
+      tmp['name'] = list_address[address]['info']['name'];
+      tmp['address'] = address;
+      result.push(tmp);
+    }
+    socket.emit('return_device', result);
   })
-  .on('timeout', () => {
-    console.log(`${__file} [${__line}]`);
+  .on('bcdata', (data) => {
+    if(socket.conn.transport.socket)
+      address = socket.conn.transport.socket._socket.remoteAddress;
+    else if(socket.request.connection)
+      address =  socket.request.connection.remoteAddress;
+    var idx = room_address.indexOf(address);
+    if(idx != -1){
+      if(list_address[address]['data_id'] == undefined){
+        list_address[address]['data_id'] = socket.id;
+        data2address[socket.id] = address;
+        // console.log(`${__file} [${__line}]`);
+        console.log(address + ' data - ' + socket.id + ' - ONLINE');
+      }
+      if(list_address[address]['data_id'] == socket.id){
+        socket.broadcast.to(idx).emit('data', data);
+      }
+    }
   })
   .on('bcaccel', (data) => {
-    console.log(`${__file} [${__line}]`);
-    console.log(util.inspect(data));
-    socket.broadcast.emit('accel', data);
-    console.log("AAA: " + data);
+    if(socket.conn.transport.socket)
+      address = socket.conn.transport.socket._socket.remoteAddress;
+    else if(socket.request.connection)
+      address =  socket.request.connection.remoteAddress;
+    var idx = room_address.indexOf(address);
+    if(idx != -1){
+      if(list_address[address]['accel_id'] == undefined){
+        list_address[address]['accel_id'] = socket.id;
+        accel2address[socket.id] = address;
+        // console.log(`${__file} [${__line}]`);
+        console.log(address + ' accel - ' + socket.id + ' - ONLINE');
+      }
+      if(list_address[address]['accel_id'] == socket.id){
+        socket.broadcast.to(idx).emit('accel', data);
+      }
+    }
+  })
+  .on('bcend', () => {
+    // console.log(`${__file} [${__line}] bcend`);
+    if(socket.conn.transport.socket)
+      address = socket.conn.transport.socket._socket.remoteAddress;
+    else if(socket.request.connection)
+      address =  socket.request.connection.remoteAddress;
+    var idx = room_address.indexOf(address);
+    if(idx != -1){
+      socket.broadcast.to(idx).emit('data', data);
+    }
+  })
+  .on('disconnect', () => {
+    // console.log(`${__file} [${__line}] disconnect`);
+    if(data2address[socket.id] != undefined){
+      address = data2address[socket.id];
+      list_address[address]['data_id'] = undefined;
+      console.log(address + ' data - ' + socket.id + ' - OFFLINE');
+    }
+    if(accel2address[socket.id] != undefined){
+      address = accel2address[socket.id];
+      list_address[address]['accel_id'] = undefined;
+      console.log(address + ' accel - ' + socket.id + ' - OFFLINE');
+    }
+  })
+  .on('timeout', () => {
+    // console.log(`${__file} [${__line}] timeout`);
   });
 
 

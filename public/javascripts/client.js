@@ -6,6 +6,7 @@ var filename = './bbs.mp3';
 var ring = new ring_buffer(64);
 // var scene = null;
 const FPS = 25;
+var room = document.getElementById("room").innerHTML;
 
 app.controller('MainCtrl', ['$scope', '$http', '$mdDialog', '$timeout', '$window', '$q', function ($scope, $http, $mdDialog, $timeout, $window, $q) {
     
@@ -122,7 +123,7 @@ app.controller('MainCtrl', ['$scope', '$http', '$mdDialog', '$timeout', '$window
 
     // Worker Networking
     const wNet = new Worker('javascripts/wNet.js');
-
+    wNet.postMessage(room);
     wNet.onmessage = (a_msg) => {
 
         // var buff = Float32Array.from(new Int16Array(a_msg.data.data));
