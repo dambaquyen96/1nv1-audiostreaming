@@ -40,12 +40,12 @@ var MyScene = cc.Scene.extend({
     _azHeight: 50,
     _azdx: 500,
     _offset: 40,
-    _gxmax: 100,
-    _gymax: 100,
-    _gzmax: 100,
-    _axmax: 5,
-    _aymax: 5,
-    _azmax: 5,
+    _gxmax: 30,
+    _gymax: 30,
+    _gzmax: 30,
+    _axmax: 2,
+    _aymax: 2,
+    _azmax: 2,
 
     ctor: function () {
         this._super();
@@ -330,30 +330,61 @@ var MyScene = cc.Scene.extend({
     },
 
     updateWf: function(val) {
-        this._wfdata[this._wIdx] = val;
+        this._wfdata[this._wIdx] = val*10;
         this._wIdx = wrap_dec(this._wIdx, this._wfdata.length, 1);
         this._dirty = true;
     },
 
     updateAC: function(data) {
         this._accelData = data;
+
         this._gxdata[this._gxdx] = this.getValue(data[0], this._gxmax);
         this._gxdx = wrap_dec(this._gxdx, this._gxdata.length, 1);
+        this._gxdata[this._gxdx] = this.getValue(data[0], this._gxmax);
+        this._gxdx = wrap_dec(this._gxdx, this._gxdata.length, 1);
+        this._gxdata[this._gxdx] = this.getValue(data[0], this._gxmax);
+        this._gxdx = wrap_dec(this._gxdx, this._gxdata.length, 1);
+
         this._gydata[this._gydx] = this.getValue(data[1], this._gymax);
         this._gydx = wrap_dec(this._gydx, this._gydata.length, 1);
+        this._gydata[this._gydx] = this.getValue(data[1], this._gymax);
+        this._gydx = wrap_dec(this._gydx, this._gydata.length, 1);
+        this._gydata[this._gydx] = this.getValue(data[1], this._gymax);
+        this._gydx = wrap_dec(this._gydx, this._gydata.length, 1);
+
         this._gzdata[this._gzdx] = this.getValue(data[2], this._gzmax);
         this._gzdx = wrap_dec(this._gzdx, this._gzdata.length, 1);
+        this._gzdata[this._gzdx] = this.getValue(data[2], this._gzmax);
+        this._gzdx = wrap_dec(this._gzdx, this._gzdata.length, 1);
+        this._gzdata[this._gzdx] = this.getValue(data[2], this._gzmax);
+        this._gzdx = wrap_dec(this._gzdx, this._gzdata.length, 1);
+
         this._axdata[this._axdx] = this.getValue(data[3], this._axmax);
         this._axdx = wrap_dec(this._axdx, this._axdata.length, 1);
+        this._axdata[this._axdx] = this.getValue(data[3], this._axmax);
+        this._axdx = wrap_dec(this._axdx, this._axdata.length, 1);
+        this._axdata[this._axdx] = this.getValue(data[3], this._axmax);
+        this._axdx = wrap_dec(this._axdx, this._axdata.length, 1);
+
         this._aydata[this._aydx] = this.getValue(data[4], this._aymax);
         this._aydx = wrap_dec(this._aydx, this._aydata.length, 1);
+        this._aydata[this._aydx] = this.getValue(data[4], this._aymax);
+        this._aydx = wrap_dec(this._aydx, this._aydata.length, 1);
+        this._aydata[this._aydx] = this.getValue(data[4], this._aymax);
+        this._aydx = wrap_dec(this._aydx, this._aydata.length, 1);
+
         this._azdata[this._azdx] = this.getValue(data[5], this._azmax);
         this._azdx = wrap_dec(this._azdx, this._azdata.length, 1);
+        this._azdata[this._azdx] = this.getValue(data[5], this._azmax);
+        this._azdx = wrap_dec(this._azdx, this._azdata.length, 1);
+        this._azdata[this._azdx] = this.getValue(data[5], this._azmax);
+        this._azdx = wrap_dec(this._azdx, this._azdata.length, 1);
+        
         this._dirtyAccel = true;
     },
 
     getValue: function(x, max) {
-        if (x >= 0)return 1.*Math.min(x, max)/max;
+        if (x >= 0) return 1.*Math.min(x, max)/max;
         else return 1.*Math.max(x,-max)/max;
     }
 });

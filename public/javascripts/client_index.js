@@ -1,6 +1,6 @@
 var app = angular.module('plunker', ['btford.socket-io'])
 .factory('socket', function (socketFactory) {
-    var socketConnection = io.connect('http://127.0.0.1:3000');
+    var socketConnection = io.connect('http://192.168.31.248:3000');
     var socket = socketFactory({
         ioSocket: socketConnection
     });

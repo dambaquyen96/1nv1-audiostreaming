@@ -11,7 +11,6 @@ function wrap_dec(v, w, i) {
 
 function ring_buffer(n=4) {
     this._size = n;
-    console.log(n);
     this._buffers = new Array(n);
     this._ridx = 0;
     this._widx = 0;
@@ -72,7 +71,7 @@ ring_buffer.prototype.write = function(buf) {
 
     if(this._cnt == this._size)
     {
-        console.log('[RB-E] OVERRUN: r:' + this._ridx + ' w: ' + this._widx);
+        // console.log('[RB-E] OVERRUN: r:' + this._ridx + ' w: ' + this._widx);
         // console.log('[RB-E] OVERRUN: ' + this._ridx);
         lRet = 1;
     }
