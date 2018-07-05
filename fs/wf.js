@@ -40,12 +40,12 @@ var MyScene = cc.Scene.extend({
     _azHeight: 50,
     _azdx: 500,
     _offset: 40,
-    _gxmax: 30,
-    _gymax: 30,
-    _gzmax: 30,
-    _axmax: 2,
-    _aymax: 2,
-    _azmax: 2,
+    _gxmax: 100,
+    _gymax: 100,
+    _gzmax: 100,
+    _axmax: 5,
+    _aymax: 5,
+    _azmax: 5,
 
     ctor: function () {
         this._super();

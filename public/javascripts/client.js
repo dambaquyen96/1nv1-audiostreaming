@@ -12,8 +12,9 @@ app.controller('MainCtrl', ['$scope', '$http', '$mdDialog', '$timeout', '$window
     
     var isRecord = false;
     var block = false;
-    var fileName = "";
+    var name = "";
     var data = [];
+    var longText = "";
     var webAudio = false;
     $scope.btnRecord = "Record";
     $scope.clickRecord = function(){
@@ -21,20 +22,31 @@ app.controller('MainCtrl', ['$scope', '$http', '$mdDialog', '$timeout', '$window
         if(isRecord){
           block = true;
           $scope.btnRecord = "Saving";
+
           var blob = new Blob(data);
-          var downloadLink = document.createElement('a');
-          downloadLink.setAttribute('download', fileName);
-          downloadLink.setAttribute('href', window.URL.createObjectURL(blob));
-          downloadLink.click();
+          var downloadAudio = document.createElement('a');
+          downloadAudio.setAttribute('download', audioFile);
+          downloadAudio.setAttribute('href', window.URL.createObjectURL(blob));
+          downloadAudio.click();
+
+          var downloadText = document.createElement('a');
+          downloadText.setAttribute('download', textFile);
+          downloadText.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(longText));
+          downloadText.click();
+
           block = false;
           $scope.btnRecord = "Record";
           data = [];
+          longText = "";
           isRecord = false;
         } else {
           $scope.btnRecord = "Stop";
           isRecord = true;
-          fileName = (new Date().getTime()) + ".raw";
-          console.log(fileName);
+          idx = 0;
+          name = "" + (new Date().getTime());
+          audioFile = name + ".raw";
+          textFile = name + ".txt";
+          console.log(name + ".[raw,txt]");
         }
       }
     };
@@ -125,7 +137,9 @@ app.controller('MainCtrl', ['$scope', '$http', '$mdDialog', '$timeout', '$window
             if(buff.length >= frames)
             {
               if(webAudio) ring.write(buff);
-              if(isRecord) data = data.concat(buff);
+              if(isRecord){
+                data = data.concat(buff);
+              }
               var tmp = 0;
               for (var i = buff.length - 1; i >= 0; i--) {
                 tmp += buff[i];
@@ -138,6 +152,10 @@ app.controller('MainCtrl', ['$scope', '$http', '$mdDialog', '$timeout', '$window
 
           case 'accel':
           {
+            if(isRecord){
+              var idx = data.length * 512;
+              longText += idx + "\t" + a_msg.data.data.toString() + "\n";
+            }
             if(scene != undefined) scene.updateAC(a_msg.data.data);
           }
           break;
