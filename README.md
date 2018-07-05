@@ -14,17 +14,22 @@ $ npm install
 1. Bật cục router wifi Xiaomi_DA63
 2. Mở server, kết nối đến router qua wifi hoặc cổng ehternet
 3. Đổi ip của server thành ip tĩnh:
+
 > IP Address:	192.168.31.248
+
 > Subnetmask:	255.255.255.0
+
 > Gateway:	192.168.31.1
+
 4. Chạy server bằng cách mở terminal và truy cập đến thư mục server 1nv1-audiostreaming, gõ lệnh:
 ```sh
-5. Gõ lệnh npm start
+$ npm start
 ```
 
 # Chạy thiết bị
 1. Mở nguồn của thiết bị, các devices sẽ tự động kết nối wifi Xiaomi_DA63
 2. Truy cập đến thiết bị qua ssh (Trên windows có thể dùng "Putty" hoặc "Bash on Ubuntu on Windows"). Yêu cầu thiết bị dùng để truy cập cũng kết nối đến wifi:
+
 Device 1 (Mic rời)
 ```sh
 $ ssh pi@192.168.31.251
