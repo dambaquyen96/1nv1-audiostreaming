@@ -21,7 +21,9 @@ $ npm install
 3. Đổi ip của server thành ip tĩnh:
 
 > IP Address:	192.168.31.248
+
 > Subnetmask:	255.255.255.0
+
 > Gateway:	192.168.31.1
 
 4. Chạy server bằng cách mở terminal và truy cập đến thư mục server 1nv1-audiostreaming, gõ lệnh:
